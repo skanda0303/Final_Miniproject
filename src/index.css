@@ -1,11 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  font-family: 'Outfit', 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Plus Jakarta Sans', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
 
   color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0c0c14;
+  color: rgba(255, 255, 255, 0.95);
+  background-color: #030308;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,79 +21,342 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
-  min-height: 100vh;
-  background: radial-gradient(circle at top right, #1a1a2e, #0c0c14);
+  height: 100vh;
+  background: radial-gradient(circle at 50% 0%, #10122e 0%, #030308 80%);
+  position: relative;
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
 }
 
 #root {
   width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 2rem;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(13, 15, 30, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #60efff 0%, #00ff87 100%);
+.glass-panel-hover:hover {
+  border-color: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 12px 40px 0 rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Gradient Text */
+.gradient-text-cyan-purple {
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-button {
-  border-radius: 12px;
-  border: 1px solid transparent;
-  padding: 0.8em 1.5em;
-  font-size: 1em;
-  font-weight: 600;
-  font-family: inherit;
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+.gradient-text-gold-rose {
+  background: linear-gradient(135deg, #fbbf24 0%, #f472b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+/* Micro animations */
+@keyframes pulse-cyan {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.7);
+    opacity: 0.8;
+  }
 }
 
-button:active {
-  transform: translateY(0);
+.pulse-dot-cyan {
+  animation: pulse-cyan 2s infinite;
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.05);
+/* Customized category card shadows */
+.card-shadow-finance:hover {
+  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.3);
 }
 
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.card-shadow-tech:hover {
+  box-shadow: 0 10px 30px rgba(6, 182, 212, 0.1);
+  border-color: rgba(6, 182, 212, 0.3);
 }
 
-.status-active .status-dot {
-  background: #00ff87;
-  box-shadow: 0 0 10px #00ff87;
+.card-shadow-projects:hover {
+  box-shadow: 0 10px 30px rgba(168, 85, 247, 0.1);
+  border-color: rgba(168, 85, 247, 0.3);
 }
 
-.status-inactive .status-dot {
-  background: #ff4b4b;
+.card-shadow-legal:hover {
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.card-shadow-education:hover {
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.card-shadow-personal:hover {
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.card-shadow-work:hover {
+  box-shadow: 0 10px 30px rgba(249, 115, 22, 0.1);
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.card-shadow-resumes:hover {
+  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.1);
+  border-color: rgba(236, 72, 153, 0.3);
+}
+
+.card-shadow-default:hover {
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(13, 15, 30, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* Tailwind Base Layer Customizations */
+@layer base {
+  .theme {
+    --font-sans: 'Plus Jakarta Sans', sans-serif;
+    --font-heading: 'Space Grotesk', sans-serif;
+  }
+  :root {
+    --background: oklch(0.08 0.02 240);
+    --foreground: oklch(0.98 0.01 240);
+    --card: oklch(0.1 0.02 240 / 50%);
+    --card-foreground: oklch(0.98 0.01 240);
+    --popover: oklch(0.1 0.02 240);
+    --popover-foreground: oklch(0.98 0.01 240);
+    --primary: oklch(0.6 0.18 250);
+    --primary-foreground: oklch(0.99 0 0);
+    --secondary: oklch(0.18 0.03 250);
+    --secondary-foreground: oklch(0.9 0.02 250);
+    --muted: oklch(0.16 0.02 240);
+    --muted-foreground: oklch(0.7 0.02 240);
+    --accent: oklch(0.18 0.03 250);
+    --accent-foreground: oklch(0.9 0.02 250);
+    --destructive: oklch(0.55 0.18 20);
+    --border: rgba(255, 255, 255, 0.07);
+    --input: rgba(255, 255, 255, 0.05);
+    --ring: oklch(0.6 0.18 250);
+    --radius: 1rem;
+  }
+}
+
+/* Premium Motion Systems */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(0.98);
+  }
+}
+
+/* Motion Class Utilities */
+.animate-slide-up {
+  animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+.animate-float {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+/* Subtle Animation 1: Hover Glow Lift & Outline (GPU only translation) */
+.hover-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.hover-glow:hover {
+  transform: translateY(-3px) scale(1.015);
+  border-color: rgba(6, 182, 212, 0.45) !important;
+  box-shadow: 0 12px 30px rgba(6, 182, 212, 0.12) !important;
+}
+
+/* Subtle Animation 2: Sync Beacon Pulse (GPU only scale & opacity) */
+@keyframes pulse-cyan {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.95;
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.7;
+    box-shadow: 0 0 14px rgba(6, 182, 212, 0.8);
+  }
+}
+
+.pulse-dot-cyan {
+  animation: pulse-cyan 2s infinite ease-in-out;
+}
+
+/* Subtle Animation 3: Magnetic Sidebar Hover Shift (GPU translation) */
+aside button {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+aside button:hover {
+  transform: translateX(4px);
+  color: #06b6d4 !important;
+}
+
+/* Subtle Animation 4: Active Badge Sparkle Glint Sweep (CSS transform translateX slide) */
+.badge-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08) 30%,
+    rgba(255, 255, 255, 0.18) 60%,
+    transparent
+  );
+  transform: translateX(-150%) skewX(-20deg);
+  animation: shimmer-sweep 6s infinite ease-in-out;
+}
+
+@keyframes shimmer-sweep {
+  0%, 80% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+/* Subtle Animation 5: Soft Cyber Focus Breathe Glow (Active input glow breathing) */
+input:focus {
+  animation: input-focus-breathe 4s infinite ease-in-out;
+  border-color: rgba(6, 182, 212, 0.4) !important;
+}
+
+@keyframes input-focus-breathe {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(6, 182, 212, 0.06);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(6, 182, 212, 0.18);
+  }
+}
+
+/* Performance-friendly Morphing Quantum AI Core Avatar */
+.ai-core-orb {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(99, 102, 241, 0.2) 50%, rgba(192, 132, 252, 0.3) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.2), inset 0 0 8px rgba(6, 182, 212, 0.15);
+  animation: morph-orb-subtle 7s ease-in-out infinite;
+}
+
+@keyframes morph-orb-subtle {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    transform: rotate(90deg) scale(1.04);
+  }
+}
+
+/* Premium Sidebar Tabs active indicator styling override */
+button[data-state="active"] {
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0.15) 0%, rgba(99, 102, 241, 0.03) 100%) !important;
+  border-left: 3px solid #06b6d4 !important;
+  box-shadow: inset 4px 0 15px -4px rgba(6, 182, 212, 0.25) !important;
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.4) !important;
+  transform: translateX(2px);
 }

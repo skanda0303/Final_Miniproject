@@ -95,6 +95,16 @@ app.get('/api/files', async (req, res) => {
     res.json(files);
 });
 
+app.get('/api/logs', async (req, res) => {
+    try {
+        const logs = await db.all('SELECT * FROM logs ORDER BY id DESC LIMIT 30');
+        res.json(logs);
+    } catch (e) {
+        console.error('Error fetching logs:', e);
+        res.status(500).json({ error: 'Failed to fetch logs' });
+    }
+});
+
 app.post('/api/scan', async (req, res) => {
     if (!agent) return res.status(400).json({ error: 'Agent not started' });
 
@@ -123,6 +133,24 @@ app.post('/api/reset', async (req, res) => {
     } catch (e) {
         console.error('Reset error:', e);
         res.status(500).json({ error: 'Failed to reset database' });
+    }
+});
+
+app.post('/api/clear', async (req, res) => {
+    if (!agent) return res.status(400).json({ error: 'Agent not started' });
+
+    try {
+        await db.run('DELETE FROM files');
+        await db.run('DELETE FROM embeddings');
+        await db.run('DELETE FROM reorganization_suggestions');
+        await db.run('DELETE FROM logs');
+
+        await agent.logAction('CLEAR', 'Database cleared successfully.');
+
+        res.json({ message: 'Database cleared successfully.' });
+    } catch (e) {
+        console.error('Clear error:', e);
+        res.status(500).json({ error: 'Failed to clear database' });
     }
 });
 
@@ -191,7 +219,22 @@ app.post('/api/ask', async (req, res) => {
         try {
             const { generateAnswer } = await import('./gemini.js');
             const answer = await generateAnswer(question, fullContext, history, modelLabel);
-            res.json({ answer, files: uniqueFiles });
+
+            // Programmatically post-process the answer to guarantee unique reference sources
+            let cleanAnswer = answer;
+            const sourcesHeaderIndex = cleanAnswer.search(/###\s*(🔍|🔎)?\s*(Reference\s*)?Sources/i);
+            const sourceList = uniqueFiles.length > 0 
+                ? uniqueFiles.map(f => `- ${f.name}`).join('\n')
+                : '*No document references used.*';
+
+            if (sourcesHeaderIndex !== -1) {
+                const baseAnswer = cleanAnswer.substring(0, sourcesHeaderIndex).trim();
+                cleanAnswer = `${baseAnswer}\n\n### 🔍 Reference Sources\n${sourceList}`;
+            } else {
+                cleanAnswer = `${cleanAnswer.trim()}\n\n### 🔍 Reference Sources\n${sourceList}`;
+            }
+
+            res.json({ answer: cleanAnswer, files: uniqueFiles });
         } catch (genError) {
             console.error('Local AI Error:', genError.message);
 

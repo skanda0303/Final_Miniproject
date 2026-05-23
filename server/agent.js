@@ -16,7 +16,7 @@ export class DriveAgent {
         console.log('Drive Agent started (PDF + DOCX only, RAG-powered)...');
 
         // Run every 15 minutes
-        this.task = cron.schedule('0 */6 * * *', () => {
+        this.task = cron.schedule('*/15 * * * *', () => {
             this.processNewFiles();
         });
 
@@ -162,6 +162,17 @@ export class DriveAgent {
         } catch (error) {
             console.error('Agent processing error:', error);
             await this.logAction('CRITICAL_ERROR', `Drive scan failed: ${error.message}`);
+            
+            // Auto-clear invalid tokens so the user is prompted to reconnect
+            if (error.message && (error.message.includes('invalid_grant') || error.message.includes('Token has been expired'))) {
+                console.log('Authentication expired or revoked. Clearing credentials from DB...');
+                try {
+                    await this.db.run('DELETE FROM tokens');
+                    this.stop(); // Stop the agent since we're no longer authenticated
+                } catch (dbErr) {
+                    console.error('Failed to clear tokens:', dbErr);
+                }
+            }
         }
     }
 
@@ -292,9 +303,19 @@ export class DriveAgent {
         const mentionedFile = allFiles.find(f => {
             const fname = f.name.toLowerCase();
             const stem = fname.replace(/\.[^.]+$/, ''); // strip extension
-            // Full name/stem match, OR any query word appears in the stem
-            return qLower.includes(fname) || qLower.includes(stem) ||
-                qWords.some(w => stem.includes(w));
+            
+            // 1. Explicit full filename match (e.g. "a.pdf" or "placement_policy.pdf")
+            if (qLower.includes(fname)) return true;
+            
+            // 2. Exact word stem match (only if stem is at least 4 characters to avoid false-matching short letters like 'a')
+            if (stem.length >= 4) {
+                if (qLower.includes(stem)) return true;
+                
+                const queryWords = qLower.split(/\s+/);
+                if (queryWords.includes(stem)) return true;
+            }
+            
+            return false;
         });
 
         if (mentionedFile) {

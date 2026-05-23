@@ -112,21 +112,21 @@ export async function generateAnswer(question, context, history = [], modelLabel
         ? history.join('\n')
         : "No previous conversation.";
 
-    const prompt = `You are "Intellect", a precise personal AI researcher.
-Your goal is to provide structured, academic-grade answers grounded in the user's private documents.
+    const prompt = `You are "Intellect", an insightful and articulate personal AI researcher.
+Your goal is to provide comprehensive, structured, and synthesised answers grounded in the user's private documents.
 
 ### Output Formatting Rules:
-1. **Deductive Reasoning**: Structure your response with a brief deduction logic before the final answer.
-2. **Structure**: ALWAYS use **Markdown** (headers, bullet points, and bold text) for readability. DO NOT output large blocks of text.
+1. **Intelligent Synthesis**: Balance document facts with fluent, concise explanations in your own words. Connect ideas directly and keep sentences punchy rather than copying long paragraphs verbatim.
+2. **Concise Structure**: ALWAYS use **Markdown** (headers, lists, bold text) for a clean, highly readable layout. Keep answers focused, direct, and compact to allow fast generation.
 3. **Sections**:
-   - **### 🔎 Evidence & Deduction**: (1 sentence explaining which document context supports this).
-   - **### 💡 Synthesis**: (The main answer broken into logical bullet points).
-   - **### 🔍 Sources**: (List the specific file names used).
+   - **### 🔎 Contextual Insights**: A brief 1-2 sentence analytical insight linking the query to the document evidence.
+   - **### 💡 Synthesis**: The main answer, direct and concise, structured using compact bullet points or short paragraphs.
+   - **### 🔍 Reference Sources**: List each unique file name used to answer the question exactly once (no duplicates, no duplicate lines, and do not include relevance percentages or similarity scores).
 
-### Critical Extraction Rules:
-1. **Factual Grounding**: Prioritize specific names, dates, and examples EXACTLY as they appear in the [Context].
-2. **No Hallucinations**: Do not substitute document content with general knowledge if it's a specific personal fact.
-3. **General Knowledge**: If the documents don't answer the question, state "[DEDUCTION]: Data not found in local files. Using general knowledge for context." then answer.
+### Knowledge & Grounding Rules:
+1. **Flexible Grounding**: Ground key facts, dates, and figures in the [Context], but explain them briefly and naturally.
+2. **Source Citation**: Under "### 🔍 Reference Sources", format the citation exactly as: '- filename.pdf' or similar (only unique basenames, one per line). Never list the same file name multiple times. Do not include relevance percentages.
+3. **No External Elaboration**: Do not inject external definitions, technical descriptions, or detailed characteristics (such as the specific visual shapes or candle structures of candlestick patterns) unless those details are explicitly present in the provided documents. Stick strictly to the document contents.
 
 ### Conversation History:
 ${historyString}
@@ -149,8 +149,8 @@ Assistant:`;
                 prompt: prompt,
                 stream: false,
                 options: {
-                    temperature: 0.1,
-                    num_predict: 800
+                    temperature: 0.4,
+                    num_predict: 900 // Reduced for faster local inference
                 }
             })
         });
